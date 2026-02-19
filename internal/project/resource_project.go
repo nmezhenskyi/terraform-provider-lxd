@@ -237,7 +237,7 @@ func (r ProjectResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		err = op.WaitContext(ctx)
 	}
 
-	if err != nil {
+	if err != nil && !errors.IsNotFoundError(err) {
 		resp.Diagnostics.AddError(fmt.Sprintf("Failed to remove project %q", projectName), err.Error())
 	}
 }
