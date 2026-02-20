@@ -22,17 +22,22 @@ env:
 name: Test
 jobs:
   acc-standalone:
-    runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os:
+          - ubuntu-24.04
         channel:
-          - 5.0/stable
-          - 5.0/edge
           - 5.21/stable
           - 5.21/edge
           - 6/stable
           - 6/edge
+        include:
+          - channel: 5.0/stable
+            os: ubuntu-22.04
+          - channel: 5.0/edge
+            os: ubuntu-22.04
 
     steps:
       - name: Checkout
@@ -103,17 +108,22 @@ jobs:
         run: make test
 
   acc-cluster:
-    runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os:
+          - ubuntu-24.04
         channel:
-          - 5.0/stable
-          - 5.0/edge
           - 5.21/stable
           - 5.21/edge
           - 6/stable
           - 6/edge
+        include:
+          - channel: 5.0/stable
+            os: ubuntu-22.04
+          - channel: 5.0/edge
+            os: ubuntu-22.04
 
     steps:
       - name: Checkout
