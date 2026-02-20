@@ -31,8 +31,8 @@ jobs:
           - 5.0/edge
           - 5.21/stable
           - 5.21/edge
-          - latest/stable
-          - latest/edge
+          - 6/stable
+          - 6/edge
 
     steps:
       - name: Checkout
@@ -112,8 +112,8 @@ jobs:
           - 5.0/edge
           - 5.21/stable
           - 5.21/edge
-          - latest/stable
-          - latest/edge
+          - 6/stable
+          - 6/edge
 
     steps:
       - name: Checkout
