@@ -284,7 +284,7 @@ resource "lxd_network" "ovnbr" {
   config = {
     "ipv4.address"     = "10.10.10.1/24"
     "ipv4.routes"      = "10.10.10.192/26"
-    "ipv4.ovn.ranges"  = "10.10.10.193-10.10.10.254"
+    "ipv4.ovn.ranges"  = "10.10.10.224-10.10.10.254"
     "ipv4.dhcp.ranges" = "10.10.10.100-10.10.10.150"
     "ipv6.address"     = "fd42:1000:1000:1000::1/64"
     "ipv6.dhcp.ranges" = "fd42:1000:1000:1000:a::-fd42:1000:1000:1000:a::ffff"
