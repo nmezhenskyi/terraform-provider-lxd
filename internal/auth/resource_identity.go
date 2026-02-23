@@ -8,6 +8,7 @@ import (
 	"github.com/canonical/lxd/shared/api"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -287,4 +288,30 @@ func (r AuthIdentityResource) SyncState(ctx context.Context, tfState *tfsdk.Stat
 	m.Groups = groups
 
 	return tfState.Set(ctx, &m)
+}
+
+func (r *AuthIdentityResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	meta := common.ImportMetadata{
+		ResourceName:   "auth_identity",
+		RequiredFields: []string{"auth_method", "name"},
+	}
+
+	fields, diag := meta.ParseImportID(req.ID)
+	if diag != nil {
+		resp.Diagnostics.Append(diag)
+		return
+	}
+
+	for k, v := range fields {
+		// Attribute "project" is parsed by default, but is not allowed for auth identity.
+		if k == "project" {
+			resp.Diagnostics.AddError(
+				fmt.Sprintf("Invalid import ID %q", req.ID),
+				"Valid import format:\nimport lxd_auth_identity.<resource> [remote:]<auth_method>/<name>",
+			)
+			break
+		}
+
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root(k), v)...)
+	}
 }
