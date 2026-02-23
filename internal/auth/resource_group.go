@@ -7,6 +7,7 @@ import (
 	lxd "github.com/canonical/lxd/client"
 	"github.com/canonical/lxd/shared/api"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -15,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/terraform-lxd/terraform-provider-lxd/internal/common"
 	"github.com/terraform-lxd/terraform-provider-lxd/internal/errors"
 	provider_config "github.com/terraform-lxd/terraform-provider-lxd/internal/provider-config"
 )
@@ -254,4 +256,30 @@ func (r AuthGroupResource) SyncState(ctx context.Context, tfState *tfsdk.State, 
 	}
 
 	return tfState.Set(ctx, &m)
+}
+
+func (r *AuthGroupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	meta := common.ImportMetadata{
+		ResourceName:   "auth_group",
+		RequiredFields: []string{"name"},
+	}
+
+	fields, diag := meta.ParseImportID(req.ID)
+	if diag != nil {
+		resp.Diagnostics.Append(diag)
+		return
+	}
+
+	for k, v := range fields {
+		// Attribute "project" is parsed by default, but is not allowed for auth group.
+		if k == "project" {
+			resp.Diagnostics.AddError(
+				fmt.Sprintf("Invalid import ID %q", req.ID),
+				"Valid import format:\nimport lxd_auth_group.<resource> [remote:]<name>",
+			)
+			break
+		}
+
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root(k), v)...)
+	}
 }
