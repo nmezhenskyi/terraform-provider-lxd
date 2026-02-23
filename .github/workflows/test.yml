@@ -53,6 +53,7 @@ jobs:
       - name: Setup LXD from ${{ matrix.channel }} channel
         run: |
           sudo snap refresh lxd --channel=${{ matrix.channel }} --cohort=+ || sudo snap install lxd --channel=${{ matrix.channel }} --cohort=+
+          sudo snap refresh --hold=8h
           sudo lxd waitready --timeout 60
           sudo lxd init --auto --network-port=8443 --network-address=localhost
           sudo chmod 777 /var/snap/lxd/common/lxd/unix.socket
