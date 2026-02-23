@@ -33,21 +33,32 @@ func TestAccPublishImage_basic(t *testing.T) {
 
 func TestAccPublishImage_aliases(t *testing.T) {
 	instanceName := acctest.GenerateName(2, "-")
-	aliases := []string{"alias1", "alias2"}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.PreCheck(t) },
 		ProtoV6ProviderFactories: acctest.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPublishImage_aliases(instanceName, aliases...),
+				Config: testAccPublishImage_aliases(instanceName, "alias1"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("lxd_instance.instance1", "name", instanceName),
+					resource.TestCheckResourceAttr("lxd_instance.instance1", "status", "Stopped"),
+					resource.TestCheckResourceAttr("lxd_publish_image.pimg", "instance", instanceName),
+					resource.TestCheckResourceAttr("lxd_publish_image.pimg", "aliases.#", "1"),
+					resource.TestCheckTypeSetElemAttr("lxd_publish_image.pimg", "aliases.*", "alias1"),
+					resource.TestCheckResourceAttrSet("lxd_publish_image.pimg", "fingerprint"),
+				),
+			},
+			{
+				// Update aliases.
+				Config: testAccPublishImage_aliases(instanceName, "alias1", "alias2"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("lxd_instance.instance1", "name", instanceName),
 					resource.TestCheckResourceAttr("lxd_instance.instance1", "status", "Stopped"),
 					resource.TestCheckResourceAttr("lxd_publish_image.pimg", "instance", instanceName),
 					resource.TestCheckResourceAttr("lxd_publish_image.pimg", "aliases.#", "2"),
-					resource.TestCheckTypeSetElemAttr("lxd_publish_image.pimg", "aliases.*", aliases[0]),
-					resource.TestCheckTypeSetElemAttr("lxd_publish_image.pimg", "aliases.*", aliases[1]),
+					resource.TestCheckTypeSetElemAttr("lxd_publish_image.pimg", "aliases.*", "alias1"),
+					resource.TestCheckTypeSetElemAttr("lxd_publish_image.pimg", "aliases.*", "alias2"),
 					resource.TestCheckResourceAttrSet("lxd_publish_image.pimg", "fingerprint"),
 				),
 			},
@@ -155,7 +166,7 @@ resource "lxd_publish_image" "pimg" {
 	`, name, acctest.TestImage, strings.Join(formatProperties(properties), "\n"))
 }
 
-func testAccPublishImage_project(project, instance string) string {
+func testAccPublishImage_project(project string, instance string) string {
 	return fmt.Sprintf(`
 resource "lxd_project" "project1" {
   name = "%s"
