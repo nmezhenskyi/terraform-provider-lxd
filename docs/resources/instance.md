@@ -342,7 +342,7 @@ Example using terraform import command:
 $ terraform import lxd_instance.myinst proj/c1,image=ubuntu-daily:22.04
 ```
 
-Example using the import block (only available in Terraform v1.5.0 and later):
+Example using the import block:
 
 ```hcl
 resource "lxd_instance" "myinst" {
