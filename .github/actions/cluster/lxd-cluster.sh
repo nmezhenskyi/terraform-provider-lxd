@@ -151,7 +151,7 @@ deploy() {
                 lxc exec "${instance}" --env=DEBIAN_FRONTEND=noninteractive -- apt-get -qq -y install snapd
 
                 # Install LXD snap.
-                lxc exec "${instance}" -- snap install lxd --channel "${VERSION_LXD}" || lxc exec "${instance}" -- snap refresh lxd --channel "${VERSION_LXD}"
+                lxc exec "${instance}" -- snap refresh lxd --channel "${VERSION_LXD}" --cohort=+ || lxc exec "${instance}" -- snap install lxd --channel "${VERSION_LXD}" --cohort=+
         done
 
         echo "Cluster instances created."

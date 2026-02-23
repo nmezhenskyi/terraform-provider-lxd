@@ -21,6 +21,20 @@ const TestCachedImage = "images:alpine/edge/cloud"
 
 var TestCachedImageSourceRemote, TestCachedImageSourceImage, _ = strings.Cut(TestCachedImage, ":")
 
+// DisableSecureBootConfigEntry contains the instance config entry to disable secure boot.
+var DisableSecureBootConfigEntry = sync.OnceValue(func() string {
+	server, err := testProvider().InstanceServer("", "", "")
+	if err != nil {
+		panic(fmt.Sprintf("Failed to connect to LXD server: %v", err))
+	}
+
+	if server.HasExtension("instance_boot_mode") {
+		return `"boot.mode" = "uefi-nosecureboot"`
+	}
+
+	return `"security.secureboot" = false`
+})
+
 var testProviderConfig *provider_config.LxdProviderConfig
 var testProviderMutex sync.Mutex
 

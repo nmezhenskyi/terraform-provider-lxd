@@ -1561,10 +1561,10 @@ resource "lxd_instance" "instance1" {
   type  = "virtual-machine"
 
   config = {
-    "security.secureboot" = false
+    %s
   }
 }
-	`, name, acctest.TestImage)
+	`, name, acctest.TestImage, acctest.DisableSecureBootConfigEntry())
 }
 
 func testAccInstance_virtualMachineNoDevLxd(name string) string {
@@ -1576,16 +1576,16 @@ resource "lxd_instance" "instance1" {
 
   config = {
     "security.devlxd"     = false
-    "security.secureboot" = false
+    %s
   }
 }
-	`, name, acctest.TestImage)
+	`, name, acctest.TestImage, acctest.DisableSecureBootConfigEntry())
 }
 
 func testAccInstance_started(name string, instanceType string) string {
 	var config string
 	if instanceType == "virtual-machine" {
-		config = `"security.secureboot" = false`
+		config = acctest.DisableSecureBootConfigEntry()
 	}
 
 	return fmt.Sprintf(`
@@ -1605,7 +1605,7 @@ resource "lxd_instance" "instance1" {
 func testAccInstance_empty(name string, instanceType string) string {
 	var config string
 	if instanceType == "virtual-machine" {
-		config = `"security.secureboot" = false`
+		config = acctest.DisableSecureBootConfigEntry()
 	}
 
 	return fmt.Sprintf(`
@@ -1624,7 +1624,7 @@ resource "lxd_instance" "instance1" {
 func testAccInstance_stopped(name string, instanceType string) string {
 	var config string
 	if instanceType == "virtual-machine" {
-		config = `"security.secureboot" = false`
+		config = acctest.DisableSecureBootConfigEntry()
 	}
 
 	return fmt.Sprintf(`
@@ -1910,7 +1910,7 @@ resource "lxd_instance" "instance1" {
 func testAccInstance_fileUploadSource(instanceName string, instanceType string) string {
 	var config string
 	if instanceType == "virtual-machine" {
-		config = `"security.secureboot" = false`
+		config = acctest.DisableSecureBootConfigEntry()
 	}
 
 	return fmt.Sprintf(`
@@ -2232,10 +2232,10 @@ resource "lxd_instance" "instance1" {
   }
 
   config = {
-    "security.secureboot" = false
+    %s
   }
 }
-	`, name, acctest.TestImage, allowRestart, cpu, memory)
+	`, name, acctest.TestImage, allowRestart, cpu, memory, acctest.DisableSecureBootConfigEntry())
 }
 
 func testAccInstance_accessInterface(networkName string, instanceName string) string {
