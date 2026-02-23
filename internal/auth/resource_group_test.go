@@ -219,6 +219,59 @@ func TestAccAuthGroup_project(t *testing.T) {
 	})
 }
 
+func TestAccAuthGroup_importEmpty(t *testing.T) {
+	resourceName := "lxd_auth_group.group"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.PreCheck(t)
+			acctest.PreCheckAPIExtensions(t, "access_management")
+		},
+		ProtoV6ProviderFactories: acctest.ProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAuthGroup_description("auth-group-test", "mydesc"),
+			},
+			{
+				ResourceName:                         resourceName,
+				ImportStateId:                        "auth-group-test",
+				ImportState:                          true,
+				ImportStateVerify:                    true,
+				ImportStateVerifyIdentifierAttribute: "name",
+			},
+		},
+	})
+}
+
+func TestAccAuthGroup_importWithPermissions(t *testing.T) {
+	resourceName := "lxd_auth_group.group"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.PreCheck(t)
+			acctest.PreCheckAPIExtensions(t, "access_management")
+		},
+		ProtoV6ProviderFactories: acctest.ProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAuthGroup_permissions("auth-group-test", []permission{
+					{
+						Entitlement: "admin",
+						EntityType:  "server",
+					},
+				}),
+			},
+			{
+				ResourceName:                         resourceName,
+				ImportStateId:                        "auth-group-test",
+				ImportState:                          true,
+				ImportStateVerify:                    true,
+				ImportStateVerifyIdentifierAttribute: "name",
+			},
+		},
+	})
+}
+
 func testAccAuthGroup_description(name string, description string) string {
 	return fmt.Sprintf(`
                 resource "lxd_auth_group" "group" {
