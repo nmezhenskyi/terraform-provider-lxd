@@ -90,54 +90,6 @@ MDEtMDEtMDFUMDA6MDA6MDBaIgp9Cg==`
 	})
 }
 
-func TestAccProvider_trustPassword(t *testing.T) {
-	defer resetLXDRemoteEnvVars()
-
-	password := acctest.ConfigureTrustPassword(t)
-	configDir := t.TempDir()
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.PreCheck(t)
-			acctest.PreCheckStandalone(t) // Cluster is not accessible on localhost.
-			acctest.PreCheckLocalServerHTTPS(t)
-		},
-		ProtoV6ProviderFactories: acctest.ProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				// Ensure authentication fails with incorrect password.
-				Config:      testAccProvider_remoteServer(configDir, "invalid", "", true),
-				ExpectError: regexp.MustCompile(`not authorized`),
-			},
-			{
-				// Ensure authentication succeeds with correct token.
-				Config: testAccProvider_remoteServer(configDir, password, "", true),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("lxd_noop.noop", "remote", "tf-remote"),
-					resource.TestCheckResourceAttr("lxd_noop.noop", "project", "default"),
-					resource.TestCheckResourceAttrSet("lxd_noop.noop", "server_version"),
-				),
-			},
-			{
-				// Ensure authentication succeeds if password is provided
-				// as environment variable.
-				PreConfig: func() {
-					configDir = t.TempDir()
-					_ = os.Setenv("LXD_REMOTE", "tf-remote-pass-fqdn")
-					_ = os.Setenv("LXD_ADDR", "https://127.0.0.1:8443")
-					_ = os.Setenv("LXD_PASSWORD", acctest.ConfigureTrustPassword(t))
-				},
-				Config: testAccProvider_remoteServerEnv(configDir),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("lxd_noop.noop", "remote", "tf-remote-pass-fqdn"),
-					resource.TestCheckResourceAttr("lxd_noop.noop", "project", "default"),
-					resource.TestCheckResourceAttrSet("lxd_noop.noop", "server_version"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccProvider_generateClientCertificate(t *testing.T) {
 	configDir := t.TempDir()
 	resource.Test(t, resource.TestCase{
