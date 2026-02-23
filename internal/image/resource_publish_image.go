@@ -327,7 +327,7 @@ func (r PublishImageResource) Update(ctx context.Context, req resource.UpdateReq
 	resp.Diagnostics.Append(diags...)
 
 	// Get info about published image.
-	image, _, err := server.GetImage(imageFingerprint)
+	image, etag, err := server.GetImage(imageFingerprint)
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to retrieve published image", err.Error())
 		return
@@ -378,7 +378,7 @@ func (r PublishImageResource) Update(ctx context.Context, req resource.UpdateReq
 		Profiles:   image.Profiles,
 	}
 
-	err = server.UpdateImage(imageFingerprint, imageReq, "")
+	err = server.UpdateImage(imageFingerprint, imageReq, etag)
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to update publihsed image properties", err.Error())
 		return
