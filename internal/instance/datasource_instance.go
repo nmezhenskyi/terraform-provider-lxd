@@ -8,7 +8,6 @@ import (
 	"github.com/canonical/lxd/shared/api"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/terraform-lxd/terraform-provider-lxd/internal/common"
 	"github.com/terraform-lxd/terraform-provider-lxd/internal/errors"
@@ -200,8 +199,6 @@ func (d *InstanceDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	var respDiags diag.Diagnostics
-
 	remote := state.Remote.ValueString()
 	project := state.Project.ValueString()
 	server, err := d.provider.InstanceServer(remote, project, "")
@@ -301,7 +298,7 @@ func (d *InstanceDataSource) Read(ctx context.Context, req datasource.ReadReques
 	interfaces, diags := common.ToInterfaceMapType(ctx, instanceState.Network, instance.Config)
 	resp.Diagnostics.Append(diags...)
 
-	if respDiags.HasError() {
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
