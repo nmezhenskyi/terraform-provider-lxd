@@ -259,7 +259,7 @@ func (r PublishImageResource) Create(ctx context.Context, req resource.CreateReq
 	}
 
 	// Wait for create operation to finish.
-	err = op.Wait()
+	err = op.WaitContext(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(fmt.Sprintf("Failed to publish instance %q image", instanceName), err.Error())
 		return
@@ -413,7 +413,7 @@ func (r PublishImageResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
-	err = opDelete.Wait()
+	err = opDelete.WaitContext(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to remove published image", err.Error())
 		return
