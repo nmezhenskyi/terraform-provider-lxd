@@ -9,13 +9,10 @@ inputs:
     default: cls
   cluster-size:
     description: The size of the cluster.
-    default: 3
+    default: '3'
   instance-type:
-    description: The instance type of the cluster member.
+    description: The instance type of the cluster member (available options are container or virtual-machine).
     default: 'container'
-    options:
-      - container
-      - virtual-machine
   lxd-version:
     description: The version of LXD to install on each cluster member.
     default: latest/edge
