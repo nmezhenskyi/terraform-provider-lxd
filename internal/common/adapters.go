@@ -3,6 +3,7 @@ package common
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -33,4 +34,17 @@ func FromSetType[T any](ctx context.Context, set types.Set) ([]T, diag.Diagnosti
 	}
 
 	return items, diags
+}
+
+func ToStringSetType(ctx context.Context, items []string) (types.Set, diag.Diagnostics) {
+	if items == nil {
+		return types.SetNull(types.StringType), nil
+	}
+
+	values := make([]attr.Value, 0, len(items))
+	for _, s := range items {
+		values = append(values, types.StringValue(s))
+	}
+
+	return types.SetValue(types.StringType, values)
 }
