@@ -85,7 +85,10 @@ func TestAccPublishImage_project(t *testing.T) {
 	instanceName := acctest.GenerateName(2, "-")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.PreCheck(t) },
+		PreCheck: func() {
+			acctest.PreCheck(t)
+			acctest.PreCheckStandalone(t) // XXX: Temporary disabled until this is addressed on LXD's side.
+		},
 		ProtoV6ProviderFactories: acctest.ProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
