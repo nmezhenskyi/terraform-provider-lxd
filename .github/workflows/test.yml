@@ -23,6 +23,7 @@ name: Test
 jobs:
   acc-standalone:
     runs-on: ${{ matrix.os }}
+    name: standalone (${{ matrix.channel }}, ${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
@@ -106,6 +107,7 @@ jobs:
 
   acc-cluster:
     runs-on: ${{ matrix.os }}
+    name: cluster (${{ matrix.channel }}, ${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
