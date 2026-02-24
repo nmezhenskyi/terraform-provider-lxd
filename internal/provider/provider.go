@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/terraform-lxd/terraform-provider-lxd/internal/auth"
 	"github.com/terraform-lxd/terraform-provider-lxd/internal/image"
 	"github.com/terraform-lxd/terraform-provider-lxd/internal/instance"
 	"github.com/terraform-lxd/terraform-provider-lxd/internal/network"
@@ -246,6 +247,7 @@ func (p *LxdProvider) Configure(ctx context.Context, req provider.ConfigureReque
 
 func (p *LxdProvider) Resources(_ context.Context) []func() resource.Resource {
 	resources := []func() resource.Resource{
+		auth.NewAuthGroupResource,
 		image.NewCachedImageResource,
 		image.NewPublishImageResource,
 		instance.NewInstanceResource,
