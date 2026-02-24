@@ -67,7 +67,7 @@ Example using terraform import command:
 $ terraform import lxd_auth_group.mygroup group1
 ```
 
-Example using the import block (only available in Terraform v1.5.0 and later):
+Example using the import block:
 
 ```hcl
 resource "lxd_auth_group" "mygroup" {
