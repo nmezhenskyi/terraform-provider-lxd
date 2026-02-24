@@ -96,7 +96,7 @@ Example using terraform import command:
 $ terraform import lxd_network_acl.acl1 proj/my-acl
 ```
 
-Example using the import block (only available in Terraform v1.5.0 and later):
+Example using the import block:
 
 ```hcl
 resource "lxd_network_acl" "acl1" {
